@@ -77,6 +77,27 @@ These are development scaffolding, not approved live terms. Live trading
 needs explicit approval of wallet, venue, sides, size limits, and risk
 policy.
 
+Legacy/unused knobs (kept for config-shape compatibility only, setting them
+changes nothing): `PRIVATE_KEY` — read but never consumed; no code path
+loads a wallet, builds a transaction, or signs. `PRIORITY_FEE_MICROLAMPORTS`
+— no live transactions exist in this build; the dry-run simulator always
+reports `feeSol: 0`.
+
+## Tests
+
+Two tiers:
+
+- `npm test` — unit/dry tier. Runs every `scripts/test-*.ts` via bun
+  (mock/deterministic where possible) and then `tsc --noEmit`; fails on
+  any failure. The live Jev bridge cycle in `test-decision.ts` is
+  best-effort here: if the bridge is unreachable it logs SKIP and the
+  suite still passes (fail-closed to PAUSE is the correct behavior there).
+- `npm run test:integration` — integration tier. Runs
+  `test-decision.ts` with `INTEGRATION=1`, which makes the live Jev bridge
+  cycle fail loudly instead of SKIP-logging. Requires a working `JEV_BIN`
+  bridge (`./scripts/jev-bridge.py` with `TYPESAFE_API_KEY`, or any
+  executable honoring the same `ask --state --questions --model` contract).
+
 ## Architecture
 
 - `src/jupiter.ts` — Jupiter spot bid/ask feed. Cached, shared in-flight
@@ -187,3 +208,19 @@ Cloudflare Tunnel approach — superseded by the poller architecture above.
   Everything above describes local runs.
 - `TRADE_SIZE_SOL`, `MAX_POSITION_SOL`, `PERP_SIZE_SOL`, `MAX_PERP_SOL`,
   and `BANKROLL_USD` are development scaffolding, not approved live terms.
+
+## Companion repository & research paper
+
+- **clawd-jev-trading-machine** — the JEV decision backend behind the same
+  discipline: TypeSafe `jev-latest` brain, dynamic venue action space
+  (Jupiter/DFlow admitted only on live quotes; out-of-set answers fail closed
+  to `BLOCKED`), CoinGecko regime context, Supermemory recall, dry-run
+  simulator, backtest replay.
+  https://github.com/Solizardking/clawd-jev-trading-machine
+- **Clawd Agentic Layer whitepaper (v0.3)** — the JEV decision-engine
+  discipline proposed as an open standard for agentic trading: typed judgment
+  primitive, dynamic action spaces, fail-closed execution, regime
+  conditioning, episodic memory, simulation-before-action, six conformance
+  invariants, and a machine-readable decision-record schema.
+  PDF: https://musebook.trade/clawd-agentic-layer-whitepaper.pdf ·
+  dataset: https://huggingface.co/datasets/ordlibrary/clawd-agentic-layer-whitepaper
