@@ -9,6 +9,9 @@ import { config } from "./config";
 import type { Fill, Quote } from "./market";
 import type { BlockEvent } from "./trader";
 import { regimeEvent, type RegimeGate } from "./regime";
+import { getPumpSnapshot } from "./pump";
+import { getStonkSnapshot } from "./stonk";
+import { previewJupiterOrder } from "./jupiter-order";
 
 interface Meta {
   model: string;
@@ -40,9 +43,15 @@ export function startServer(
     port: config.port,
     fetch(req) {
       const { pathname } = new URL(req.url);
+      const url = new URL(req.url);
       if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
       if (pathname === "/") return json({ ...meta, latest: history().at(-1) ?? null });
       if (pathname === "/history") return json(history());
+      if (pathname === "/pump") return json(getPumpSnapshot());
+      if (pathname === "/stonk") return getStonkSnapshot().then((snapshot) => json(snapshot));
+      if (pathname === "/jupiter/order-preview") {
+        return previewJupiterOrder(url.searchParams).then((preview) => json(preview, preview.ok ? 200 : 400));
+      }
       if (pathname === "/regime") {
         const g = latestRegime();
         return g ? json(regimeEvent(g)) : json({ error: "no regime judgment yet" }, 503);

@@ -19,6 +19,7 @@ import { askJev } from "./jev";
 import { mockAskJev, type AskFn } from "./decision";
 import { Trader } from "./trader";
 import { startServer } from "./server";
+import { startPumpStream } from "./pump";
 
 if (config.venue === "phoenix") {
   console.log(
@@ -31,13 +32,14 @@ if (config.venue === "phoenix") {
 // MODEL=mock -> deterministic stand-in (honest label; never real Jev).
 const ask: AskFn = config.model === "jev" ? askJev : mockAskJev;
 const modelName = config.model === "jev" ? config.jevModelId : "mock";
+startPumpStream();
 
 const server = startServer(
   {
     model: modelName,
     wallet: "dry-run (no wallet)",
     dryRun: config.dryRun,
-    market: "multi-venue: jupiter+dflow spot · imperial perps",
+    market: "multi-venue: jupiter+dflow spot · imperial perps · pump ws · stonkfun",
     venue: config.venue,
     startedAt: Date.now(),
   },

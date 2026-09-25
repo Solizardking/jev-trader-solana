@@ -21,7 +21,7 @@
  * freshness info, and data older than config.dflowStaleMs pauses quoting.
  */
 
-import { homedir } from "node:os";
+import { fileURLToPath } from "node:url";
 
 export interface DflowSnapshot {
   source: "dflow";
@@ -42,7 +42,7 @@ const QUOTE_SIZE_SOL = Number(process.env.SPOT_QUOTE_SIZE_SOL ?? "0.1");
 const SUBPROC_TIMEOUT_MS = Number(process.env.DFLOW_SUBPROC_TIMEOUT_MS ?? "15000");
 const BIN =
   process.env.DFLOW_QUOTE_BIN ??
-  `${homedir()}/workspace/skills/dflow/bin/dflow_quote.py`;
+  fileURLToPath(new URL("../scripts/dflow-quote.py", import.meta.url));
 
 interface Raw { bid: number; ask: number; mid: number; spreadBps: number }
 

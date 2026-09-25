@@ -55,6 +55,18 @@ export const config = {
   /** DFlow feed: cache TTL and staleness cutoff. */
   dflowTtlMs: Number(env("DFLOW_TTL_MS", "10000")),
   dflowStaleMs: Number(env("DFLOW_STALE_MS", "300000")),
+  /** Realtime Pump.fun launch tape from the CLAWD websocket. */
+  pumpWsUrl: env("PUMP_WS_URL", "wss://clawd-ws.fly.dev/ws")!,
+  pumpHealthUrl: env("PUMP_HEALTH_URL", "https://clawd-ws.fly.dev/health")!,
+  pumpTapeMax: Number(env("PUMP_TAPE_MAX", "200")),
+  /** Stonk.fun public market data. Reads are keyless; writes stay out of this runtime. */
+  stonkBaseUrl: env("STONK_BASE_URL", "https://www.stonkfun.xyz/api/public/v1")!,
+  stonkTtlMs: Number(env("STONK_TTL_MS", "15000")),
+  stonkFetchTimeoutMs: Number(env("STONK_FETCH_TIMEOUT_MS", "12000")),
+  /** Jupiter Swap V2 order preview. Execution/signing is intentionally absent. */
+  jupiterSwapBaseUrl: env("JUPITER_SWAP_BASE_URL", "https://api.jup.ag/swap/v2")!,
+  jupiterApiKey: env("JUPITER_API_KEY"),
+  jupiterOrderTimeoutMs: Number(env("JUPITER_ORDER_TIMEOUT_MS", "12000")),
   /** Imperial perps feed: cache TTL and staleness cutoff. */
   imperialTtlMs: Number(env("IMPERIAL_TTL_MS", "10000")),
   imperialStaleMs: Number(env("IMPERIAL_STALE_MS", "300000")),
