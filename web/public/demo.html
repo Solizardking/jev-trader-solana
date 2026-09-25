@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CoinGecko price card — jev-trader-solana demo</title>
+<link rel="stylesheet" href="./coingecko-card.css" />
+<style>
+  body { background: #010409; color: #e6edf3; font-family: system-ui, sans-serif; margin: 0; padding: 32px; }
+  h1 { font-size: 18px; font-weight: 700; margin: 0 0 6px; }
+  p.sub { color: #8b949e; font-size: 13px; margin: 0 0 20px; max-width: 560px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .cap { font-size: 12px; color: #8b949e; margin-top: 8px; }
+  #regime { max-width: 420px; }
+  .rg { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background: #0d1117;
+        border: 1px solid #1f2937; border-radius: 12px; padding: 14px 16px; }
+  .rg .paused { color: #f5c542; font-weight: 700; }
+  .rg .go { color: #14f195; font-weight: 700; }
+  .rg dt { color: #8b949e; } .rg dd { margin: 2px 0 10px; }
+</style>
+</head>
+<body>
+  <h1>🦞 CoinGecko price card</h1>
+  <p class="sub">
+    Live demo of <code>web/coingecko-card.js</code>. Fetches the CoinGecko free API directly
+    (no key). Append <code>?demo=stale</code> or <code>?demo=unknown</code> to preview the
+    honest stale / unavailable states. When the trader service runs, the same card is fed by
+    its <code>/regime</code> snapshot instead.
+  </p>
+  <div class="row">
+    <div>
+      <div id="card"></div>
+      <div class="cap">Drop-in component — no build step, no framework.</div>
+    </div>
+    <div id="regime">
+      <div class="rg" id="regime-box">loading regime…</div>
+      <div class="cap">Regime gate panel (same shape the service broadcasts on SSE <code>regime</code> events).</div>
+    </div>
+  </div>
+
+  <script src="./coingecko-card.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var demo = params.get("demo");
+
+      function fetchSnapshot() {
+        if (demo === "stale") {
+          // honest stale state: last good data, 8 minutes old
+          return Promise.resolve({
+            source: "coingecko", priceUsd: 117.34, change24hPct: 2.12,
+            high24h: 117.65, low24h: 112.72, volume24hUsd: 4374669862,
+            marketCapUsd: 68956709911,
+            fetchedAt: Date.now() - 8 * 60 * 1000, ageMs: 8 * 60 * 1000,
+            stale: true, ok: true,
+          });
+        }
+        if (demo === "unknown") {
+          return Promise.resolve({
+            source: "coingecko", priceUsd: null, change24hPct: null,
+            high24h: null, low24h: null, volume24hUsd: null, marketCapUsd: null,
+            fetchedAt: 0, ageMs: Infinity, stale: true, ok: false,
+          });
+        }
+        return fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=solana&price_change_percentage=24h")
+          .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+          .then(function (arr) {
+            var m = arr[0];
+            var fetchedAt = Date.now();
+            return {
+              source: "coingecko",
+              priceUsd: m.current_price, change24hPct: m.price_change_percentage_24h,
+              high24h: m.high_24h, low24h: m.low_24h,
+              volume24hUsd: m.total_volume, marketCapUsd: m.market_cap,
+              fetchedAt: fetchedAt, ageMs: 0, stale: false, ok: true,
+            };
+          });
+      }
+
+      CoinGeckoCard.mount(document.getElementById("card"), fetchSnapshot, 60000);
+
+      // Regime panel: served by the trader service when it exists; otherwise hidden honest state.
+      fetch("/regime")
+        .then(function (r) { if (!r.ok) throw new Error("no /regime"); return r.json(); })
+        .then(function (g) {
+          var box = document.getElementById("regime-box");
+          var status = g.paused
+            ? '<span class="paused">⏸ PAUSED — ' + g.reason + "</span>"
+            : '<span class="go">● QUOTING — ' + g.reason + "</span>";
+          box.innerHTML =
+            "<dl>" +
+            "<dt>status</dt><dd>" + status + "</dd>" +
+            "<dt>regime</dt><dd>" + g.regime.choice + " (conf " + g.regime.confidence.toFixed(2) + ")</dd>" +
+            "<dt>momentum P(continue)</dt><dd>" + (g.momentumYes == null ? "—" : g.momentumYes.toFixed(3)) + "</dd>" +
+            "<dt>volatility</dt><dd>" + (g.volatility == null ? "—" : g.volatility.score.toFixed(2)) + "</dd>" +
+            "<dt>allowed</dt><dd>buy " + g.allowed.buy + " · sell " + g.allowed.sell + "</dd>" +
+            "<dt>jev</dt><dd>" + (g.jevOk ? "ok (" + g.jevLatencyMs + "ms)" : "FAILED — gate closed") + "</dd>" +
+            "</dl>";
+        })
+        .catch(function () {
+          document.getElementById("regime-box").textContent =
+            "regime feed unavailable — start the trader service to populate this panel.";
+        });
+    })();
+  </script>
+</body>
+</html>
