@@ -157,6 +157,28 @@ deterministic route, simulated-fill status, rejection reasons), venue cards
 position/unrealized PnL), CoinGecko card, regime gate, dry-run/paused/
 disconnected/no-data states. Footer: `powered by $CLAWD` · `Not advice.`
 
+## Public dashboard + read-only API
+
+Anyone can watch the live mock trader without running anything:
+
+- **Dashboard:** https://musebook.trade/jev/ — operation decision, six
+  operation probabilities, slippage target, Jupiter/DFlow/Imperial venue
+  cards, regime gate, reference price, stats, and the live cycle feed.
+  Banner: *Dry-run only — mock JEV, nothing is signed or submitted.*
+- **Public API:** https://jev-api.musebook.trade/ — read-only:
+  `GET /feed` (full snapshot), `GET /history`, `GET /regime`, `GET /`.
+  CORS `*`, GET/OPTIONS only. No wallet, signing, execution, or trading
+  endpoints exist anywhere on the public surface.
+
+Data flow: the local trader (mock JEV, `DRY_RUN=true`) cycles every few
+seconds; `jev-poller.py` POSTs a snapshot every ~30s to a secret-verified
+ingest endpoint on the public worker, which caches the latest snapshot
+(`status`, last 50 history entries, `regime`) for 1 hour. `watchdog.sh`
+restarts the mock backend and the poller if either goes unhealthy.
+
+`dns-stub.py` / `edge-relay.py` are leftover experiments from an abandoned
+Cloudflare Tunnel approach — superseded by the poller architecture above.
+
 ## Honest status
 
 - **Dry-run only.** Simulated fills at real quotes; no money moves, no
