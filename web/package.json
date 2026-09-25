@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "description": "Clawd JEV Trader dashboard \u2014 SOL-USDC taker sim: Jupiter + DFlow spot, Imperial perps.",
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  },
+  "name": "clawd-jev-trader-web",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "version": "0.1.0"
+}

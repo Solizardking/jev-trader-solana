@@ -1,0 +1,1 @@
+{"compilerOptions":{"esModuleInterop":true,"lib":["ESNext"],"module":"ESNext","moduleResolution":"Bundler","noEmit":true,"resolveJsonModule":true,"skipLibCheck":true,"strict":true,"target":"ESNext","types":["bun"]},"include":["src/**/*.ts","scripts/test-*.ts","scripts/rpc-bridge.py"]}

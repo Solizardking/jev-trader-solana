@@ -1,0 +1,166 @@
+/* Page shell. Component-level styling lives with each component; this file only
+   owns the two-column main row, the state banners, and the footer.
+
+   Desktop (>= 900px): the card is a fixed-height flex column (see globals.css)
+   and this row is its only flexible child, so nothing can push the page past
+   the viewport. Below 900px everything falls back to normal document flow. */
+
+/* ---- honest-state banners: visibly distinct, never faked ---- */
+
+.dryRun {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 24px 8px;
+  padding: 10px 14px;
+  border: 1px dashed var(--sol-purple);
+  border-radius: 12px;
+  background: #F7F2FF;
+  color: #4C1D95;
+  font-size: 12.5px;
+}
+
+.dryRunBadge {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  background: var(--sol-purple);
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.paused {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 24px 8px;
+  padding: 10px 14px;
+  border: 1px solid #E4B83E;
+  border-radius: 12px;
+  background: #FFF7E0;
+  color: #7A5B0E;
+  font-size: 12.5px;
+}
+
+.pausedBadge {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  background: #D9A418;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+/* ---- main two-column row ---- */
+
+.main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 16px;
+  padding: 0 24px;
+  align-items: stretch;
+}
+
+/* left column: the chart, filling all remaining height */
+.left {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* the FlowChart root is width/height 100% of this box */
+.chartWrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* right column: decision panel (fixed) + coingecko card (fixed) + feed (fills, clips) */
+.right {
+  width: 470px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.right > :first-child,
+.right > :nth-child(2) {
+  flex: none;
+}
+
+/* ... and the feed takes whatever is left, clipping its own overflow */
+.right > :last-child {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- footer ---- */
+
+.footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 24px 0;
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.footerClawd {
+  font-weight: 600;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.footerNote {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 899.98px) {
+  .main {
+    flex: none;
+    flex-direction: column;
+    padding: 0 16px;
+  }
+
+  .left {
+    flex: none;
+  }
+
+  /* no viewport-driven height down here, so give the chart a shape */
+  .chartWrap {
+    flex: none;
+    aspect-ratio: 4 / 3;
+  }
+
+  .right {
+    width: 100%;
+  }
+
+  .dryRun,
+  .paused {
+    margin: 0 16px 8px;
+  }
+
+  .footer {
+    padding: 10px 16px 0;
+  }
+}

@@ -1,0 +1,54 @@
+/* CoinGecko-style price card — matches the dark Solana-trader dashboard look. */
+.cg-card {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  background: #0d1117;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 16px 18px;
+  max-width: 420px;
+  color: #e6edf3;
+}
+.cg-banner {
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.cg-banner-stale { background: #3b2f0b; border: 1px solid #8a6d1a; color: #f5c542; }
+.cg-banner-unknown { background: #3b1a1a; border: 1px solid #8a3a3a; color: #f58a8a; }
+.cg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.cg-pair { display: flex; align-items: center; gap: 10px; }
+.cg-icon {
+  font-size: 28px; line-height: 1;
+  background: linear-gradient(135deg, #9945ff, #14f195);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.cg-name { font-size: 15px; font-weight: 700; }
+.cg-ticker { font-size: 11px; color: #8b949e; letter-spacing: 0.06em; }
+.cg-price-wrap { text-align: right; }
+.cg-price { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.cg-change {
+  display: inline-block; margin-top: 4px; font-size: 14px; font-weight: 700;
+  padding: 3px 10px; border-radius: 999px;
+}
+.cg-change-sub { font-size: 10px; font-weight: 400; opacity: 0.7; margin-left: 6px; }
+.cg-up { background: rgba(20, 241, 149, 0.12); color: #14f195; }
+.cg-down { background: rgba(248, 81, 73, 0.12); color: #f85149; }
+.cg-neutral { background: rgba(139, 148, 158, 0.12); color: #8b949e; }
+.cg-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px;
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid #1f2937;
+}
+.cg-stat { display: flex; justify-content: space-between; font-size: 13px; }
+.cg-label { color: #8b949e; }
+.cg-value { font-weight: 600; }
+.cg-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid #1f2937;
+  font-size: 11px; color: #6e7681;
+}
+.cg-attrib { letter-spacing: 0.04em; }
+.cg-fresh { font-variant-numeric: tabular-nums; }
+.cg-card.cg-stale .cg-price { color: #f5c542; }
+.cg-card.cg-unknown .cg-price { color: #6e7681; }
